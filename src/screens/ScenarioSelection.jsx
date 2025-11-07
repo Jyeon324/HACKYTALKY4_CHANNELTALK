@@ -5,7 +5,7 @@ import { ThemedText } from "../components/themed-text";
 import { ThemedView } from "../components/themed-view";
 import { useNavigation } from "@react-navigation/native";
 import CustomScenarioModal from "../components/CustomScenarioModal";
-import * as Location from 'expo-location';
+import * as Location from "expo-location";
 
 const SCENARIOS = [
   {
@@ -60,36 +60,38 @@ const SCENARIOS = [
 
 export function ScenarioSelection() {
   const navigation = useNavigation();
-  
+
   const sendSituationMessage = async (message) => {
-    const url = 'https://api.channel.io/open/v5/groups/501934/messages';
+    const url = "https://api.channel.io/open/v5/groups/501934/messages";
     const headers = {
-      'accept': 'application/json',
-      'Content-Type': 'application/json',
-      'x-access-key': '690e39c241b08848e2f8',
-      'x-access-secret': 'efa1dd4dca75922d66c3df1c0b7c05de'
+      accept: "application/json",
+      "Content-Type": "application/json",
+      "x-access-key": "690e39c241b08848e2f8",
+      "x-access-secret": "efa1dd4dca75922d66c3df1c0b7c05de",
     };
     const body = JSON.stringify({
-      blocks: [{
-        type: 'text',
-        value: message
-      }]
+      blocks: [
+        {
+          type: "text",
+          value: message,
+        },
+      ],
     });
 
     try {
       const response = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: headers,
-        body: body
+        body: body,
       });
       const responseData = await response.json();
       if (response.ok) {
-        console.log('Message sent successfully:', responseData);
+        console.log("Message sent successfully:", responseData);
       } else {
-        console.error('Failed to send message:', responseData);
+        console.error("Failed to send message:", responseData);
       }
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
     }
   };
 
@@ -97,7 +99,7 @@ export function ScenarioSelection() {
     try {
       // 1. Request permission
       let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
+      if (status !== "granted") {
         // Permission denied
         const message = `'${scenario.title}' 상황에서 긴급 호출이 있었으나, 사용자가 위치 정보 접근을 허용하지 않아 위치를 전송할 수 없습니다.`;
         sendSituationMessage(message);
@@ -112,9 +114,9 @@ export function ScenarioSelection() {
       // 3. Send location message
       const message = `긴급 알림: '${scenario.title}' 상황에서 사용자가 긴급 호출을 사용했습니다. 현재 위치는 다음과 같습니다. 위치: ${mapsLink}`;
       sendSituationMessage(message);
-
+      navigation.navigate("Incoming", { scenario, from: "ScenarioSelect" });
     } catch (error) {
-      console.error('Error getting location or sending message:', error);
+      console.error("Error getting location or sending message:", error);
       // Send a generic error message if something goes wrong
       const message = `'${scenario.title}' 상황에서 긴급 호출이 있었으나, 기술적인 문제로 위치 정보를 가져오는 데 실패했습니다.`;
       sendSituationMessage(message);
@@ -122,7 +124,7 @@ export function ScenarioSelection() {
       // 4. Navigate to the call screen regardless of location success
       navigation.navigate("Incoming", { scenario, from: "ScenarioSelect" });
     }
-  
+  };
   const [customScenarios, setCustomScenarios] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -138,10 +140,6 @@ export function ScenarioSelection() {
   const saveCustomScenarios = async (updated) => {
     setCustomScenarios(updated);
     await AsyncStorage.setItem("customScenarios", JSON.stringify(updated));
-  };
-
-  const handlePress = (scenario) => {
-    navigation.navigate("Incoming", { scenario, from: "ScenarioSelect" });
   };
 
   const handleAddScenario = (newScenario) => {
