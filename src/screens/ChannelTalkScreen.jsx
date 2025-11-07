@@ -1,10 +1,9 @@
-import React from 'react';
-import { WebView } from 'react-native-webview';
-import { StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from "react";
+import { WebView } from "react-native-webview";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-//const CHANNEL_URL = 'https://91y3l.channel.io';
-const CHANNEL_URL = 'https://91y3l.channel.io/workflows/793672';
+const CHANNEL_URL = "https://91y3l.channel.io/workflows/793672";
 
 export default function ChannelTalkScreen() {
   return (
@@ -12,7 +11,7 @@ export default function ChannelTalkScreen() {
       <WebView
         style={styles.webview}
         source={{ uri: CHANNEL_URL }}
-        originWhitelist={['*']}
+        originWhitelist={["*"]}
         javaScriptEnabled={true}
         domStorageEnabled={true}
         allowFileAccess={true}
@@ -20,7 +19,7 @@ export default function ChannelTalkScreen() {
         allowUniversalAccessFromFileURLs={true}
         mixedContentMode="always"
         onShowFileChooser={(event) => {
-          console.log('File chooser requested');
+          console.log("File chooser requested");
           return true;
         }}
         onShouldStartLoadWithRequest={(request) => {

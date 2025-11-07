@@ -15,7 +15,6 @@ import {
 import * as Contacts from "expo-contacts";
 import { PhoneTypeSelectModal } from "../components/PhoneTypeSelectModal";
 
-// Helper to group contacts by the first letter of their name
 const groupContacts = (contacts) => {
   const grouped = contacts.reduce((acc, contact) => {
     const firstLetter = contact.name[0].toUpperCase();
@@ -51,7 +50,7 @@ export function ContactsScreen({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [phoneTypeModalVisible, setPhoneTypeModalVisible] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
-  const [callDelay, setCallDelay] = useState(5); // Default to 10 seconds
+  const [callDelay, setCallDelay] = useState(5);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
 

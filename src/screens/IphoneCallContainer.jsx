@@ -6,7 +6,6 @@ import { IphoneCallScreenSendScreen } from "./IphoneCallSendScreen";
 import { Audio } from "expo-av";
 
 export function IphoneCallContainer({ navigation, route }) {
-  // route params에서 연락처 정보 가져오기 (없으면 기본값 사용)
   const { callerName = "홍길동", callerNumber = "010-1234-5678" } =
     route?.params || {};
 

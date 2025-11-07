@@ -34,7 +34,7 @@ export default function CallOngoingScreen() {
 
   const handleEndCallButton = () => {
     stop();
-    const targetRoute = from === "Contacts" ? "Contacts" : "ScenarioSelect"; // ✅ 분기 로직
+    const targetRoute = from === "Contacts" ? "Contacts" : "ScenarioSelect";
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
