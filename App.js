@@ -8,6 +8,7 @@ import { ScenarioSelection } from "./src/screens/ScenarioSelection";
 import { HomeScreen } from "./src/screens/HomeScreen";
 import { IphoneCallContainer } from "./src/screens/IphoneCallContainer";
 import { ContactsScreen } from "./src/screens/ContactsScreen";
+import ChannelTalkScreen from "./src/screens/ChannelTalkScreen";
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,11 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="IphoneCall" component={IphoneCallContainer} />
         <Stack.Screen name="Contacts" component={ContactsScreen} />
+        <Stack.Screen
+          name="ChannelTalk"
+          component={ChannelTalkScreen}
+          options={{ headerShown: true, title: "채널톡 문의" }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

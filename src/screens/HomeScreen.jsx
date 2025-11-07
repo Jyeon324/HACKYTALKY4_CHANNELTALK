@@ -11,6 +11,11 @@ function HomeScreen({ navigation }) {
     navigation.navigate("Contacts");
   };
 
+  const handleChannelTalk = () => {
+    navigation.navigate("ChannelTalk");
+  };
+
+
   const handleIphoneCall = () => {
     navigation.navigate("IphoneCall");
   };
@@ -74,6 +79,13 @@ function HomeScreen({ navigation }) {
       </View>
 
       <View style={styles.footer}>
+        <TouchableOpacity
+          style={[styles.cardButton, { marginBottom: 15 }]}
+          activeOpacity={0.8}
+          onPress={handleChannelTalk}
+        >
+          <Text style={styles.buttonText}>채널톡 문의</Text>
+        </TouchableOpacity>
         <Text style={styles.footerText}>
           💡 Tip: 벨소리와 진동을 설정할 수 있어요
         </Text>
