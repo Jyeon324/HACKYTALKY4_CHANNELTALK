@@ -131,6 +131,7 @@ export function ContactsScreen({ navigation }) {
             name: selectedContact.name,
             phoneNumber: selectedContact.phoneNumber,
           },
+          from: "Contacts",
         });
       }
     }, callDelay * 1000);

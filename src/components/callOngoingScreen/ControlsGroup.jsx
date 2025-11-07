@@ -4,7 +4,7 @@ import ControlButton from "./ControlButton";
 import EndCallButton from "./EndCallButton";
 import { height, width } from "../../constants/dimensions";
 
-export default function ControlsGroup() {
+export default function ControlsGroup({ onEndCall }) {
   return (
     <View style={styles.controlsContainer}>
       <View style={styles.row}>
@@ -19,7 +19,7 @@ export default function ControlsGroup() {
         <ControlButton icon="dialpad" label="키패드" />
       </View>
 
-      <EndCallButton />
+      <EndCallButton onPress={onEndCall} />
     </View>
   );
 }

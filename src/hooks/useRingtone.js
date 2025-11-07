@@ -1,13 +1,15 @@
 import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 export default function useRingtone(file) {
   if (!file) return;
   const player = useAudioPlayer(file, { downloadFirst: true });
   const status = useAudioPlayerStatus(player);
+  const isStopped = useRef(false);
 
   const start = useCallback(() => {
     try {
+      isStopped.current = false;
       player.seekTo(0);
       player.play();
     } catch (error) {
@@ -17,6 +19,8 @@ export default function useRingtone(file) {
 
   const stop = useCallback(() => {
     try {
+      if (isStopped.current) return; // ✅ 이미 정지된 경우 무시
+      isStopped.current = true;
       player.pause();
     } catch (error) {
       console.log("Ringtone stop error: ", error);
@@ -38,8 +42,13 @@ export default function useRingtone(file) {
   //언마운트 시 해제
   useEffect(() => {
     return () => {
-      player.pause();
-      player.remove();
+      if (isStopped.current) return;
+      try {
+        player.pause();
+        player.remove();
+      } catch (err) {
+        console.warn("⚠️ cleanup error:", err);
+      }
     };
   }, [player]);
 

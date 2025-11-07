@@ -5,15 +5,19 @@ import Header from "../components/callOngoingScreen/Header";
 import AssistButton from "../components/callOngoingScreen/AssistButton";
 import ControlsGroup from "../components/callOngoingScreen/ControlsGroup";
 import { Animated, StyleSheet, View } from "react-native";
-import { height } from "../constants/dimensions";
 import useRingtone from "../hooks/useRingtone";
-import { useRoute } from "@react-navigation/native";
+import {
+  CommonActions,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 
 export default function CallOngoingScreen() {
   const route = useRoute();
   const bgAnim = useRef(new Animated.Value(0)).current;
+  const navigation = useNavigation();
 
-  const { scenario } = route.params;
+  const { scenario, from } = route.params;
   const ringtoneFile = scenario?.ringtone ?? require("../assets/default.mp3");
 
   const { start, stop } = useRingtone(ringtoneFile);
@@ -23,11 +27,21 @@ export default function CallOngoingScreen() {
     phoneNumber: scenario?.phoneNumber,
   };
 
-  // 🎨 어두운 계열 색상 팔레트로 interpolation
   const bgInterpolation = bgAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ["#0e0d18", "#2b2438"],
   });
+
+  const handleEndCallButton = () => {
+    stop();
+    const targetRoute = from === "Contacts" ? "Contacts" : "ScenarioSelect"; // ✅ 분기 로직
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: targetRoute }],
+      })
+    );
+  };
 
   useEffect(() => {
     const loop = Animated.loop(
@@ -67,7 +81,7 @@ export default function CallOngoingScreen() {
 
       <Header phoneNumber={caller.phoneNumber} callerName={caller.name} />
       <AssistButton />
-      <ControlsGroup />
+      <ControlsGroup onEndCall={handleEndCallButton} />
     </View>
   );
 }

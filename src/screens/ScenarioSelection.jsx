@@ -59,7 +59,7 @@ const SCENARIOS = [
 export function ScenarioSelection() {
   const navigation = useNavigation();
   const handlePress = (scenario) => {
-    navigation.navigate("Incoming", { scenario });
+    navigation.navigate("Incoming", { scenario, from: "ScenarioSelect" });
   };
 
   return (

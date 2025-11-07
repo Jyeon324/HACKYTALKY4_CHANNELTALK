@@ -20,7 +20,7 @@ export default function CallIncomingScreen() {
 
   const { start, stop } = useRingtone(require("../assets/galaxy_ringtone.mp3"));
   const { stop: stopVibration } = useVibration([0, 1000, 1000]);
-  const { scenario } = route.params;
+  const { scenario, from } = route.params;
 
   // 💡 배경 색상 애니메이션
   useEffect(() => {
@@ -55,15 +55,16 @@ export default function CallIncomingScreen() {
     return () => stop();
   }, [start, stop]);
 
-  const onAccept = (scenario) => {
+  const onAccept = (scenario, from) => {
     stop();
     stopVibration();
-    navigation.navigate("Ongoing", { scenario });
+    navigation.navigate("Ongoing", { scenario, from });
   };
 
   const onDecline = () => {
     stop();
     stopVibration();
+    navigation.goBack();
   };
 
   return (
@@ -90,7 +91,7 @@ export default function CallIncomingScreen() {
           color={COLORS.primary}
           iconRotate="0deg"
           anim={pulseAccept}
-          onComplete={() => onAccept(scenario)}
+          onComplete={() => onAccept(scenario, from)}
         />
         <SlideButton
           color={COLORS.danger}

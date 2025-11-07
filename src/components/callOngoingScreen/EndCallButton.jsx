@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { height } from "../../constants/dimensions";
 
-export default function EndCallButton() {
+export default function EndCallButton({ onPress }) {
   return (
     <TouchableOpacity activeOpacity={0.8} style={styles.endButton}>
       <Ionicons
@@ -11,6 +11,7 @@ export default function EndCallButton() {
         size={36}
         color="#fff"
         style={{ transform: [{ rotate: "135deg" }] }}
+        onPress={onPress}
       />
     </TouchableOpacity>
   );
