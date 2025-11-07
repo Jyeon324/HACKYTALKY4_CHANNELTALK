@@ -51,7 +51,7 @@ export function ContactsScreen({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [phoneTypeModalVisible, setPhoneTypeModalVisible] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
-  const [callDelay, setCallDelay] = useState(10); // Default to 10 seconds
+  const [callDelay, setCallDelay] = useState(5); // Default to 10 seconds
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
 
