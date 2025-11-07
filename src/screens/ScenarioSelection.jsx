@@ -1,4 +1,5 @@
 import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import * as Location from 'expo-location';
 
 import { ThemedText } from "../components/themed-text";
 import { ThemedView } from "../components/themed-view";
@@ -59,7 +60,7 @@ const SCENARIOS = [
 export function ScenarioSelection() {
   const navigation = useNavigation();
 
-  const sendSituationMessage = async (scenarioTitle) => {
+  const sendSituationMessage = async (message) => {
     const url = 'https://api.channel.io/open/v5/groups/501934/messages';
     const headers = {
       'accept': 'application/json',
@@ -70,7 +71,7 @@ export function ScenarioSelection() {
     const body = JSON.stringify({
       blocks: [{
         type: 'text',
-        value: `${scenarioTitle} 테스트 메시지입니다.`
+        value: message
       }]
     });
 
@@ -91,9 +92,35 @@ export function ScenarioSelection() {
     }
   };
 
-  const handlePress = (scenario) => {
-    sendSituationMessage(scenario.title);
-    navigation.navigate("Incoming", { scenario, from: "ScenarioSelect" });
+  const handlePress = async (scenario) => {
+    try {
+      // 1. Request permission
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        // Permission denied
+        const message = `'${scenario.title}' 상황에서 긴급 호출이 있었으나, 사용자가 위치 정보 접근을 허용하지 않아 위치를 전송할 수 없습니다.`;
+        sendSituationMessage(message);
+        return;
+      }
+
+      // 2. Get location
+      let location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+      // 3. Send location message
+      const message = `긴급 알림: '${scenario.title}' 상황에서 사용자가 긴급 호출을 사용했습니다. 현재 위치는 다음과 같습니다. 위치: ${mapsLink}`;
+      sendSituationMessage(message);
+
+    } catch (error) {
+      console.error('Error getting location or sending message:', error);
+      // Send a generic error message if something goes wrong
+      const message = `'${scenario.title}' 상황에서 긴급 호출이 있었으나, 기술적인 문제로 위치 정보를 가져오는 데 실패했습니다.`;
+      sendSituationMessage(message);
+    } finally {
+      // 4. Navigate to the call screen regardless of location success
+      navigation.navigate("Incoming", { scenario, from: "ScenarioSelect" });
+    }
   };
 
   return (
