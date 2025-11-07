@@ -58,7 +58,41 @@ const SCENARIOS = [
 
 export function ScenarioSelection() {
   const navigation = useNavigation();
+
+  const sendSituationMessage = async (scenarioTitle) => {
+    const url = 'https://api.channel.io/open/v5/groups/501934/messages';
+    const headers = {
+      'accept': 'application/json',
+      'Content-Type': 'application/json',
+      'x-access-key': '690e39c241b08848e2f8',
+      'x-access-secret': 'efa1dd4dca75922d66c3df1c0b7c05de'
+    };
+    const body = JSON.stringify({
+      blocks: [{
+        type: 'text',
+        value: `${scenarioTitle} 테스트 메시지입니다.`
+      }]
+    });
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: body
+      });
+      const responseData = await response.json();
+      if (response.ok) {
+        console.log('Message sent successfully:', responseData);
+      } else {
+        console.error('Failed to send message:', responseData);
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
+
   const handlePress = (scenario) => {
+    sendSituationMessage(scenario.title);
     navigation.navigate("Incoming", { scenario, from: "ScenarioSelect" });
   };
 
