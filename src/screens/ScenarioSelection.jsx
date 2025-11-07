@@ -86,7 +86,6 @@ export function ScenarioSelection() {
       });
       const responseData = await response.json();
       if (response.ok) {
-        console.log("Message sent successfully:", responseData);
       } else {
         console.error("Failed to send message:", responseData);
       }
@@ -97,6 +96,7 @@ export function ScenarioSelection() {
 
   const handlePress = async (scenario) => {
     try {
+      navigation.navigate("Incoming", { scenario, from: "ScenarioSelect" });
       // 1. Request permission
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -114,7 +114,6 @@ export function ScenarioSelection() {
       // 3. Send location message
       const message = `긴급 알림: '${scenario.title}' 상황에서 사용자가 긴급 호출을 사용했습니다. 현재 위치는 다음과 같습니다. 위치: ${mapsLink}`;
       sendSituationMessage(message);
-      navigation.navigate("Incoming", { scenario, from: "ScenarioSelect" });
     } catch (error) {
       console.error("Error getting location or sending message:", error);
       // Send a generic error message if something goes wrong
