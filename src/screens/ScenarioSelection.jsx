@@ -1,10 +1,11 @@
-import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
-
+import React, { useState, useEffect } from "react";
+import { View, Image, Pressable, ScrollView, StyleSheet } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemedText } from "../components/themed-text";
 import { ThemedView } from "../components/themed-view";
 import { useNavigation } from "@react-navigation/native";
+import CustomScenarioModal from "../components/CustomScenarioModal";
 
-// TODO: Replace placeholder images with scenario-specific images
 const SCENARIOS = [
   {
     id: "dinner",
@@ -36,7 +37,7 @@ const SCENARIOS = [
     name: "애기❤️",
     phoneNumber: "010-1234-5678",
     image: require("../assets/images/unwanted_approach.png"),
-    ringtone: require("../assets/street.mp3"),
+    ringtone: require("../assets/boyfriend.mp3"),
   },
   {
     id: "date_excuse",
@@ -58,22 +59,43 @@ const SCENARIOS = [
 
 export function ScenarioSelection() {
   const navigation = useNavigation();
+  const [customScenarios, setCustomScenarios] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // 🧠 커스텀 시나리오 로드
+  useEffect(() => {
+    (async () => {
+      const saved = await AsyncStorage.getItem("customScenarios");
+      if (saved) setCustomScenarios(JSON.parse(saved));
+    })();
+  }, []);
+
+  // 🧠 커스텀 시나리오 저장
+  const saveCustomScenarios = async (updated) => {
+    setCustomScenarios(updated);
+    await AsyncStorage.setItem("customScenarios", JSON.stringify(updated));
+  };
+
   const handlePress = (scenario) => {
     navigation.navigate("Incoming", { scenario, from: "ScenarioSelect" });
+  };
+
+  const handleAddScenario = (newScenario) => {
+    const updated = [...customScenarios, newScenario];
+    saveCustomScenarios(updated);
+    setModalVisible(false);
   };
 
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="title">상황 선택</ThemedText>
-        <ThemedText>
-          탈출하고 싶은 상황을 선택하세요. 5~10초 뒤에 전화가 옵니다.
-        </ThemedText>
+        <ThemedText>탈출하고 싶은 상황을 선택하세요.</ThemedText>
       </ThemedView>
 
       <ScrollView>
         <View style={styles.cardContainer}>
-          {SCENARIOS.map((scenario) => (
+          {[...SCENARIOS, ...customScenarios].map((scenario) => (
             <Pressable
               key={scenario.id}
               style={styles.card}
@@ -93,19 +115,31 @@ export function ScenarioSelection() {
               </View>
             </Pressable>
           ))}
+
+          {/* + 커스텀 추가 버튼 */}
+          <Pressable
+            style={[styles.card, styles.addCard]}
+            onPress={() => setModalVisible(true)}
+          >
+            <View style={styles.addContent}>
+              <ThemedText style={styles.addText}>+ 커스텀 상황 추가</ThemedText>
+            </View>
+          </Pressable>
         </View>
       </ScrollView>
+
+      {/* 커스텀 모달 */}
+      <CustomScenarioModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onComplete={handleAddScenario}
+      />
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  titleContainer: {
-    padding: 16,
-  },
+  container: { flex: 1 },
   stepContainer: {
     paddingHorizontal: 16,
     gap: 8,
@@ -123,18 +157,17 @@ const styles = StyleSheet.create({
     width: "48%",
     aspectRatio: 0.9,
     marginBottom: 16,
-    // Shadow styles applied here
     elevation: 3,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    backgroundColor: "transparent", // Important for shadows on iOS
+    backgroundColor: "transparent",
   },
   cardWrapper: {
     flex: 1,
     borderRadius: 16,
-    overflow: "hidden", // This clips the image
+    overflow: "hidden",
   },
   image: {
     position: "absolute",
@@ -154,4 +187,13 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
   },
+  addCard: {
+    borderWidth: 2,
+    borderColor: "#aaa",
+    borderStyle: "dashed",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  addContent: { flex: 1, alignItems: "center", justifyContent: "center" },
+  addText: { fontSize: 16, fontWeight: "600", color: "#888" },
 });
